@@ -1,5 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, Button, Alert } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+
+const response = '[{"subject":"science","chapter":"11. Bankruptcy","type":1,"question":"Yes No Please","options":["Yes","No","Please","All"],"answer":"All"},{"subject":"science","chapter":"12. No","type":2,"question":"What is?","answer":["Yes","Statement","Brushless"]}]';
 
 class TopBarText extends React.Component {
 	
@@ -42,11 +45,16 @@ class AnswerButton extends React.Component {
 	
 }
 
-export default class App extends React.Component {
+class ScreenMain extends React.Component {
 	
-	
+	static navigationOptions = {
+		title: 'Welcome',
+	};
 	
 	render() {
+		
+		var json = JSON.parse(response);
+		
 		return (
 		<View style={styles.container}>
 			<TopBarText title='Yes' />
@@ -161,3 +169,9 @@ const buttonStyles = StyleSheet.create({
 		color: '#cfc'
 	},
 });
+
+const App = StackNavigator({
+	Home: { screen: ScreenMain }
+});
+
+export default App;
