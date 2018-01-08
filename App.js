@@ -37,7 +37,7 @@ class AnswerButton extends React.Component {
 		return (
 			<Button 
 					style={buttonStyles.answer}
-					title={this.props.title} 
+					title={this.props.children} 
 					onPress={this.onPressLearnMore}
 					/>
 		);
@@ -54,34 +54,20 @@ class ScreenMain extends React.Component {
 	render() {
 		
 		var json = JSON.parse(response);
+		var question = json[0];
+		
+		var choices = question.options;
 		
 		return (
 		<View style={styles.container}>
 			<TopBarText title='Yes' />
 			<View style={styles.main}>
-				<Text>Open up App.js to start working on your app!</Text>
-				<Text>Changes you make will automatically reload.</Text>
-				<Text>Shake your phone to open the developer menu.</Text>
-				<Text>This is a test and stuff</Text>
+				<Text>{question.question}</Text>
 			</View>
 			
 			<View style={buttonStyles.container}>
 			
-				<AnswerButton 
-					title='42'
-					/>
-					
-				<AnswerButton 
-					title='72'
-					/>
-				
-				<AnswerButton 
-					title='11'
-					/>
-					
-				<AnswerButton 
-					title='17'
-					/>
+				{choices.fill().map((_, i) => i).map(i => <AnswerButton>child{i}</AnswerButton>)}
 			
 			</View>
 			<ScrollView horizontal={true}>
