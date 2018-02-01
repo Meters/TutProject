@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ReactTimeout from 'react-timeout'
-import { buttonStyles } from '../styles';
+import { styles, buttonStyles } from '../styles';
 import {
     Text,
     View,
     Button,
-    Alert
+    Alert,
+	Modal,
+	TouchableOpacity
 } from 'react-native';
 
 import * as actionsQuestion from '../actions/actionsQuestion';
@@ -86,37 +88,79 @@ class ScreenQuestion extends React.Component {
     constructor(props) {
         // Pass props back to parent
         super(props);
+		this.state = {
+			modalVisible: false,
+			modalAnswerState: true,
+			modalAnswerCorrect: '',
+		};
     }
 
+	closeModal(){
+		this.setState({
+			modalVisible:false 
+			});
+		prepareQuestions(this.props);
+	}
+	
 
 
     // Submit book handler
     submitAnswer(answer) {
-        prepareQuestions(this.props);
+		
+		this.setState({
+				modalVisible:true,
+				modalAnswerState: (this.props.question[0].answer == answer),
+				modalAnswerCorrect: this.props.question[0].answer,
+			}, () => console.log(this.state));
+		
+        
     }
 
     render() {
         
-        
-        console.log("Welp");
-        console.log(this.props);
-        
         if (!this.props.question || this.props.question.length == 0) {
             prepareQuestions(this.props)
         }
-        
-        console.log("Wel====");
-        console.log(this.props);
 
         // Title input tracker
         let titleInput;
         // return JSX
 
         let options = this.props.question[0].options;
-        console.log(options);
+		
+		var modalTitle = "Yes";
+		var modalDesc = "Yes";
+		var modalStyle = [styles.innerContainer, styles.correct];
+		
+		if(this.state.modalAnswerState){
+			modalTitle = "Yes!";
+			modalDesc = "You got it correct!";
+			modalStyle = [styles.innerContainer, styles.correct];
+		}
+		else{
+			modalTitle = "Oh no!";
+			modalDesc = "The correct answer is: " + this.state.modalAnswerCorrect;
+			modalStyle = [styles.innerContainer, styles.wrong];
+		}
 
         return ( 
-            <View>
+            <View style={styles.parent}>
+				
+				<Modal
+					transparent={true}
+					visible={ this.state.modalVisible }
+					animationType={'slide'}
+					onRequestClose={() => this.closeModal()}
+					>
+					<TouchableOpacity style={ styles.modalContainer }
+						onPress={() => {this.closeModal()}}>
+						<View style={ modalStyle }>
+							<Text style={ [ styles.textTitle, styles.textWhite ] }>{ modalTitle }</Text>
+							<Text style={ [ styles.textSubtitle, styles.textWhite ] }>{ modalDesc }</Text>
+						</View>
+					</TouchableOpacity>
+				</Modal>
+				
                 <View>
                     <Text> { this.props.question[0].question } </Text> 
                 </View>
@@ -125,7 +169,8 @@ class ScreenQuestion extends React.Component {
 
                     { options.map((obj, index) => { return <Button key={index} title={obj} onPress={ () => this.submitAnswer(obj) } /> }) }
 
-                </View> 
+                </View>
+				
             </View>
 
         )
